@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Bypasser</title>
+    <title>Website Access</title>
     <style>
         * {
             margin: 0;
@@ -14,7 +14,7 @@
 
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -22,19 +22,19 @@
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.95);
+            background: white;
             padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 500px;
         }
 
         h1 {
-            color: #1a1a1a;
+            color: #333;
             text-align: center;
             margin-bottom: 1.5rem;
-            font-size: 1.8rem;
+            font-size: 2rem;
         }
 
         .input-group {
@@ -43,21 +43,23 @@
 
         input[type="text"] {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
+            padding: 15px;
+            border: 2px solid #eee;
             border-radius: 8px;
             font-size: 1rem;
-            transition: border-color 0.3s ease;
+            transition: all 0.3s ease;
         }
 
         input[type="text"]:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #4ECDC4;
+            box-shadow: 0 0 10px rgba(78, 205, 196, 0.1);
         }
 
         .buttons {
             display: flex;
             gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         button {
@@ -67,56 +69,60 @@
             border-radius: 8px;
             font-size: 1rem;
             cursor: pointer;
-            transition: transform 0.2s ease, opacity 0.2s ease;
+            transition: all 0.3s ease;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .open-btn {
+            background: #4ECDC4;
+        }
+
+        .google-btn {
+            background: #FF6B6B;
         }
 
         button:hover {
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         button:active {
             transform: translateY(0);
-            opacity: 0.8;
-        }
-
-        .open-btn {
-            background: #667eea;
-            color: white;
-        }
-
-        .google-btn {
-            background: #4285f4;
-            color: white;
         }
 
         .history {
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 2px solid #e0e0e0;
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
         }
 
         .history h2 {
+            color: #333;
             font-size: 1.2rem;
             margin-bottom: 1rem;
-            color: #1a1a1a;
         }
 
         .history-list {
-            max-height: 150px;
+            max-height: 200px;
             overflow-y: auto;
         }
 
         .history-item {
-            padding: 8px;
-            background: #f5f5f5;
+            padding: 10px;
+            background: white;
             border-radius: 6px;
             margin-bottom: 8px;
             cursor: pointer;
-            transition: background 0.2s ease;
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
         }
 
         .history-item:hover {
-            background: #e0e0e0;
+            background: #f0f0f0;
+            transform: translateX(5px);
         }
 
         @media (max-width: 480px) {
@@ -128,7 +134,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Website Bypasser</h1>
+        <h1>Website Access</h1>
         <div class="input-group">
             <input type="text" id="urlInput" placeholder="Enter URL or search term..." />
         </div>
@@ -144,9 +150,9 @@
 
     <script>
         // Get stored history or initialize empty array
-        let history = JSON.parse(localStorage.getItem('bypassHistory')) || [];
+        let history = JSON.parse(localStorage.getItem('accessHistory')) || [];
 
-        // Function to open URL in about:blank
+        // Function to open URL in about:blank with redirect
         function openUrl() {
             const url = document.getElementById('urlInput').value;
             if (!url) return;
@@ -159,15 +165,26 @@
             // Add to history
             addToHistory(fullUrl);
 
-            // Open in about:blank
+            // Create a new window and redirect
             const win = window.open('about:blank', '_blank');
-            win.document.write(`
-                <iframe src="${fullUrl}" style="position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;">
-                </iframe>
-            `);
+            if (win) {
+                win.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                        <head>
+                            <title>Redirecting...</title>
+                        </head>
+                        <body>
+                            <script>
+                                window.location.href = "${fullUrl}";
+                            <\/script>
+                        </body>
+                    </html>
+                `);
+            }
         }
 
-        // Function to open Google search
+        // Function to open Google search with redirect
         function openGoogle() {
             const searchTerm = document.getElementById('urlInput').value;
             if (!searchTerm) return;
@@ -175,12 +192,24 @@
             // Add to history
             addToHistory(`Google: ${searchTerm}`);
 
-            // Open Google search in about:blank
+            // Create a new window and redirect to Google search
             const win = window.open('about:blank', '_blank');
-            win.document.write(`
-                <iframe src="https://www.google.com/search?q=${encodeURIComponent(searchTerm)}" style="position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;">
-                </iframe>
-            `);
+            if (win) {
+                const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(searchTerm)}`;
+                win.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                        <head>
+                            <title>Redirecting to Google...</title>
+                        </head>
+                        <body>
+                            <script>
+                                window.location.href = "${googleUrl}";
+                            <\/script>
+                        </body>
+                    </html>
+                `);
+            }
         }
 
         // Function to add item to history
@@ -192,7 +221,7 @@
             history = history.slice(0, 10);
             
             // Save to localStorage
-            localStorage.setItem('bypassHistory', JSON.stringify(history));
+            localStorage.setItem('accessHistory', JSON.stringify(history));
             
             // Update display
             updateHistoryDisplay();
@@ -218,6 +247,13 @@
 
         // Initial history display
         updateHistoryDisplay();
+
+        // Add enter key support
+        document.getElementById('urlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                openUrl();
+            }
+        });
     </script>
 </body>
 </html>
